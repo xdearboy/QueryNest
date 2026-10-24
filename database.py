@@ -53,3 +53,12 @@ class Database:
             self.conn.rollback()
             raise DatabaseError(str(error))
 
+    def preview(self, table):
+        table = table.replace('"', '""')
+        try:
+            result = self.conn.execute(f'SELECT * FROM "{table}" LIMIT 100')
+        except sqlite3.DatabaseError as error:
+            raise DatabaseError(str(error))
+        names = [item[0] for item in result.description]
+        return names, result.fetchall()
+
