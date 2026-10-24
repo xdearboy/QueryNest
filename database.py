@@ -25,3 +25,18 @@ class Database:
         if self.conn is not None:
             self.conn.close()
             self.conn = None
+
+    def tables(self):
+        rows = self.conn.execute(
+            "SELECT name FROM sqlite_master "
+            "WHERE type = 'table' AND name NOT LIKE 'sqlite_%' "
+            "ORDER BY name"
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    def columns(self, table):
+        table = table.replace('"', '""')
+        rows = self.conn.execute(f'PRAGMA table_info("{table}")').fetchall()
+        if not rows:
+            raise DatabaseError("Такой таблицы нет")
+        return [row[1] for row in rows]
