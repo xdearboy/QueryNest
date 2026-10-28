@@ -27,6 +27,8 @@ class Database:
             self.conn = None
 
     def tables(self):
+        if self.conn is None:
+            return []
         rows = self.conn.execute(
             "SELECT name FROM sqlite_master "
             "WHERE type = 'table' AND name NOT LIKE 'sqlite_%' "
@@ -35,6 +37,8 @@ class Database:
         return [row[0] for row in rows]
 
     def columns(self, table):
+        if self.conn is None:
+            raise DatabaseError("База данных не открыта")
         table = table.replace('"', '""')
         rows = self.conn.execute(f'PRAGMA table_info("{table}")').fetchall()
         if not rows:
@@ -42,6 +46,8 @@ class Database:
         return [row[1] for row in rows]
 
     def execute(self, sql):
+        if self.conn is None:
+            raise DatabaseError("База данных не открыта")
         try:
             result = self.conn.execute(sql)
             names = [item[0] for item in result.description] if result.description else []
@@ -54,6 +60,8 @@ class Database:
             raise DatabaseError(str(error))
 
     def preview(self, table):
+        if self.conn is None:
+            raise DatabaseError("База данных не открыта")
         table = table.replace('"', '""')
         try:
             result = self.conn.execute(f'SELECT * FROM "{table}" LIMIT 100')
