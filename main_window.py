@@ -22,6 +22,8 @@ from database import Database, DatabaseError
 
 
 class MainWindow(QMainWindow):
+    """Главное окно приложения QueryNest."""
+
     def __init__(self):
         super().__init__()
         self.db = Database()
