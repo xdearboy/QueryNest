@@ -33,7 +33,9 @@ class MainWindow(QMainWindow):
 
         self.tables_list = QListWidget()
         self.query_edit = QPlainTextEdit()
-        self.query_edit.setPlaceholderText("Введите SQL-запрос, например: SELECT * FROM ...")
+        self.query_edit.setPlaceholderText(
+            "Введите SQL-запрос, например: SELECT * FROM ..."
+        )
         self.run_button = QPushButton("Выполнить")
         self.data_table = QTableWidget()
 

@@ -14,10 +14,10 @@ class Database:
 
     def open(self, path):
         """Открыть SQLite базу по пути.
-        
+
         Аргументы:
             path: путь к файлу .db, .sqlite или .sqlite3
-            
+
         Вызывает DatabaseError если файл не существует или не SQLite база.
         """
         if not os.path.isfile(path):
@@ -38,7 +38,7 @@ class Database:
 
     def tables(self):
         """Получить список имён таблиц (без служебных таблиц SQLite).
-        
+
         Возвращает список строк, отсортирован по алфавиту.
         Возвращает пустой список если база не открыта.
         """
@@ -53,10 +53,10 @@ class Database:
 
     def columns(self, table):
         """Получить список имён столбцов таблицы.
-        
+
         Аргументы:
             table: имя таблицы
-            
+
         Возвращает список строк — имена столбцов.
         Вызывает DatabaseError если база не открыта или таблица не существует.
         """
@@ -70,22 +70,24 @@ class Database:
 
     def execute(self, sql):
         """Выполнить SQL-запрос (SELECT, INSERT, UPDATE, DELETE и т.д.).
-        
+
         Аргументы:
             sql: SQL-запрос в виде строки
-            
+
         Возвращает кортеж (names, rows, count):
         - names: список имён столбцов (для SELECT, иначе пусто)
         - rows: список кортежей — строки результата (для SELECT, иначе пусто)
         - count: количество вернулось строк (SELECT) или изменённых строк (INSERT/UPDATE/DELETE)
-        
+
         Вызывает DatabaseError если база не открыта или SQL содержит ошибку.
         """
         if self.conn is None:
             raise DatabaseError("База данных не открыта")
         try:
             result = self.conn.execute(sql)
-            names = [item[0] for item in result.description] if result.description else []
+            names = (
+                [item[0] for item in result.description] if result.description else []
+            )
             rows = result.fetchall() if names else []
             count = len(rows) if names else max(result.rowcount, 0)
             self.conn.commit()
@@ -96,14 +98,14 @@ class Database:
 
     def preview(self, table):
         """Получить первые 100 строк таблицы.
-        
+
         Аргументы:
             table: имя таблицы
-            
+
         Возвращает кортеж (names, rows):
         - names: список имён столбцов
         - rows: список кортежей (максимум 100 строк)
-        
+
         Вызывает DatabaseError если база не открыта или таблица не существует.
         """
         if self.conn is None:
